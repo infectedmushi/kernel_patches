@@ -28,14 +28,4 @@ index XXXXXXXX..YYYYYYYY 100644
 +	return check_v2_signature(path, expected_manager_size, expected_manager_hash);
 +#endif
  }
-diff --git a/kernel/selinux/rules.c b/kernel/selinux/rules.c
-index XXXXXXXX..YYYYYYYY 100644
---- a/kernel/selinux/rules.c
-+++ b/kernel/selinux/rules.c
-@@ -148,6 +148,7 @@ void ksu_apply_kernelsu_rules()
- 	susfs_set_zygote_sid();
- #endif
- 
-+
- 	mutex_unlock(&ksu_rules);
- }
+
