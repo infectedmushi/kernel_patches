@@ -27,3 +27,5 @@ index XXXXXXXX..YYYYYYYY 100644
 +	return check_v2_signature(path, expected_manager_size, expected_manager_hash);
 +#endif
  }
+
+ 
