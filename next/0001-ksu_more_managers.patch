@@ -1,32 +1,36 @@
-From d0b52b0f157debf0d943d4a78ed29c4462b2da2a Mon Sep 17 00:00:00 2001
+From 22a8c3e8e121e78553f1f3b06e81f181f11a43a0 Mon Sep 17 00:00:00 2001
 From: deepongi <infectedmushi@gmail.com>
-Date: Tue, 12 Aug 2025 16:33:16 +0100
-Subject: [PATCH] james patch: Add multiple fallback manager signatures
+Date: Tue, 9 Sep 2025 12:20:00 +0100
+Subject: [PATCH] feat: Add fallback signatures for manager APK
+
+This patch modifies the is_manager_apk function to support multiple
+hardcoded APK signatures as fallbacks. This allows custom builds
+or forks of the manager app to be recognized.
 
 ---
- kernel/apk_sign.c      | 5 +++--
+ kernel/apk_sign.c      | 9 +++++++--
  kernel/selinux/rules.c | 1 +
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/apk_sign.c b/kernel/apk_sign.c
-index aea0a480..e69c3a3b 100644
+index XXXXXXXX..YYYYYYYY 100644
 --- a/kernel/apk_sign.c
 +++ b/kernel/apk_sign.c
-@@ -387,8 +387,9 @@ bool ksu_is_manager_apk(char *path)
+@@ -14,8 +14,13 @@ bool is_manager_apk(char *path)
+ 	pr_info("%s: expected size: %u, expected hash: %s\n",
  		path, expected_manager_size, expected_manager_hash);
  
- 
- #ifdef CONFIG_KSU_SUSFS
--	return (check_v2_signature(path, expected_manager_size, expected_manager_hash)
--			|| check_v2_signature(path, 0x33b, "c371061b19d8c7d7d6133c6a9bafe198fa944e50c1b31c9d8daa8d7f1fc2d2d6")); // KernelSU Manager
+-	return check_v2_signature(path, expected_manager_size, expected_manager_hash);
++#ifdef CONFIG_KSU_SUSFS
 +	return (check_v2_signature(path, expected_manager_size, expected_manager_hash) /* Dynamic */
 +			|| check_v2_signature(path, 0x33b, "c371061b19d8c7d7d6133c6a9bafe198fa944e50c1b31c9d8daa8d7f1fc2d2d6") /* KernelSU Manager */
 +			|| check_v2_signature(path, 0x39b, "593d4ce870c02468639efeef631e07ca4d852d63f154be56706229f9a5be0800")); /* WKSU Manager */
- #else
- 	return check_v2_signature(path, expected_manager_size, expected_manager_hash);
- #endif
++#else
++	return check_v2_signature(path, expected_manager_size, expected_manager_hash);
++#endif
+ }
 diff --git a/kernel/selinux/rules.c b/kernel/selinux/rules.c
-index 02504b64..7362b18a 100644
+index XXXXXXXX..YYYYYYYY 100644
 --- a/kernel/selinux/rules.c
 +++ b/kernel/selinux/rules.c
 @@ -148,6 +148,7 @@ void ksu_apply_kernelsu_rules()
