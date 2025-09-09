@@ -1,10 +1,12 @@
 From 22a8c3e8e121e78553f1f3b06e81f181f11a43a0 Mon Sep 17 00:00:00 2001
 From: deepongi <infectedmushi@gmail.com>
-Date: Tue, 9 Sep 2025 12:24:00 +0100
-Subject: [PATCH] feat: Add fallback signatures for manager APK
+Date: Tue, 9 Sep 2025 12:30:00 +0100
+Subject: [PATCH] feat: Add multiple fallback signatures for manager APK
 
 This patch modifies the is_manager_apk function to support multiple
-hardcoded APK signatures as fallbacks.
+hardcoded APK signatures as fallbacks. This allows custom builds
+or forks of the manager app (KernelSU Manager, WKSU Manager) to be
+recognized by the kernel.
 
 ---
  kernel/apk_sign.c      | 7 ++++++-
@@ -28,4 +30,14 @@ index XXXXXXXX..YYYYYYYY 100644
 +	return check_v2_signature(path, expected_manager_size, expected_manager_hash);
 +#endif
  }
-
+diff --git a/kernel/selinux/rules.c b/kernel/selinux/rules.c
+index XXXXXXXX..YYYYYYYY 100644
+--- a/kernel/selinux/rules.c
++++ b/kernel/selinux/rules.c
+@@ -148,6 +148,7 @@ void ksu_apply_kernelsu_rules()
+ 	susfs_set_zygote_sid();
+ #endif
+ 
++
+ 	mutex_unlock(&ksu_rules);
+ }
