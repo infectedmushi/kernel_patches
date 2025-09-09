@@ -1,18 +1,14 @@
 From 22a8c3e8e121e78553f1f3b06e81f181f11a43a0 Mon Sep 17 00:00:00 2001
 From: deepongi <infectedmushi@gmail.com>
-Date: Tue, 9 Sep 2025 12:35:00 +0100
-Subject: [PATCH] feat(ksu): Add fallback signatures and improve formatting
+Date: Tue, 9 Sep 2025 12:37:00 +0100
+Subject: [PATCH] feat(ksu): Add multiple fallback signatures for manager APK
 
-This patch introduces two main changes:
-1. Modifies `is_manager_apk` in `apk_sign.c` to support multiple
-   hardcoded APK signatures as fallbacks.
-2. Adds a blank line for readability in `apply_kernelsu_rules` in
-   `selinux/rules.c`.
+This patch modifies the is_manager_apk function in apk_sign.c to
+support multiple hardcoded APK signatures as fallbacks.
 
 ---
- kernel/apk_sign.c      | 7 ++++++-
- kernel/selinux/rules.c | 1 +
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ kernel/apk_sign.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/apk_sign.c b/kernel/apk_sign.c
 index XXXXXXXX..YYYYYYYY 100644
@@ -30,15 +26,4 @@ index XXXXXXXX..YYYYYYYY 100644
 +#else
 +	return check_v2_signature(path, expected_manager_size, expected_manager_hash);
 +#endif
- }
-diff --git a/kernel/selinux/rules.c b/kernel/selinux/rules.c
-index XXXXXXXX..YYYYYYYY 100644
---- a/kernel/selinux/rules.c
-+++ b/kernel/selinux/rules.c
-@@ -102,5 +102,6 @@ void apply_kernelsu_rules()
- 	ksu_allow(db, "system_server", KERNEL_SU_DOMAIN, "process", "getpgid");
- 	ksu_allow(db, "system_server", KERNEL_SU_DOMAIN, "process", "sigkill");
- 
-+
- 	mutex_unlock(&ksu_rules);
  }
