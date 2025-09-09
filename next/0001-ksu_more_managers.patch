@@ -1,22 +1,21 @@
 From 22a8c3e8e121e78553f1f3b06e81f181f11a43a0 Mon Sep 17 00:00:00 2001
 From: deepongi <infectedmushi@gmail.com>
-Date: Tue, 9 Sep 2025 12:20:00 +0100
+Date: Tue, 9 Sep 2025 12:24:00 +0100
 Subject: [PATCH] feat: Add fallback signatures for manager APK
 
 This patch modifies the is_manager_apk function to support multiple
-hardcoded APK signatures as fallbacks. This allows custom builds
-or forks of the manager app to be recognized.
+hardcoded APK signatures as fallbacks.
 
 ---
- kernel/apk_sign.c      | 9 +++++++--
+ kernel/apk_sign.c      | 7 ++++++-
  kernel/selinux/rules.c | 1 +
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/apk_sign.c b/kernel/apk_sign.c
 index XXXXXXXX..YYYYYYYY 100644
 --- a/kernel/apk_sign.c
 +++ b/kernel/apk_sign.c
-@@ -14,8 +14,13 @@ bool is_manager_apk(char *path)
+@@ -19,6 +19,11 @@ bool is_manager_apk(char *path)
  	pr_info("%s: expected size: %u, expected hash: %s\n",
  		path, expected_manager_size, expected_manager_hash);
  
