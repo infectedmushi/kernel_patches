@@ -1,0 +1,42 @@
+From d0b52b0f157debf0d943d4a78ed29c4462b2da2a Mon Sep 17 00:00:00 2001
+From: deepongi <infectedmushi@gmail.com>
+Date: Tue, 12 Aug 2025 16:33:16 +0100
+Subject: [PATCH] james patch
+
+---
+ kernel/apk_sign.c      | 6 ++++++
+ kernel/selinux/rules.c | 1 +
+ 2 files changed, 7 insertions(+)
+
+diff --git a/kernel/apk_sign.c b/kernel/apk_sign.c
+index aea0a480..791df8b7 100644
+--- a/kernel/apk_sign.c
++++ b/kernel/apk_sign.c
+@@ -387,5 +387,11 @@ bool ksu_is_manager_apk(char *path)
+ 	pr_info("%s: expected size: %u, expected hash: %s\n",
+ 		path, expected_manager_size, expected_manager_hash);
+ 
++
++#ifdef CONFIG_KSU_SUSFS
++    return (check_v2_signature(path, expected_manager_size, expected_manager_hash)
++            || check_v2_signature(path, 0x39b, "593d4ce870c02468639efeef631e07ca4d852d63f154be56706229f9a5be0800") // TheWildJames Fork Manager
++            || check_v2_signature(path, 0x33b, "c371061b19d8c7d7d6133c6a9bafe198fa944e50c1b31c9d8daa8d7f1fc2d2d6")); // KSU Manager
++#else
+    return check_v2_signature(path, expected_manager_size, expected_manager_hash);
++#endif
+ }
+diff --git a/kernel/selinux/rules.c b/kernel/selinux/rules.c
+index 02504b64..7362b18a 100644
+--- a/kernel/selinux/rules.c
++++ b/kernel/selinux/rules.c
+@@ -148,6 +148,7 @@ void ksu_apply_kernelsu_rules()
+ 	susfs_set_zygote_sid();
+ #endif
+ 
++
+ 	mutex_unlock(&ksu_rules);
+ }
+ 
+-- 
+2.50.1
+
