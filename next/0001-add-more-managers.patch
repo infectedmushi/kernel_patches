@@ -1,0 +1,28 @@
+From f827488a3618f62adf8af0000b5c03b6be977185 Mon Sep 17 00:00:00 2001
+From: deepongi <infectedmushi@gmail.com>
+Date: Wed, 10 Sep 2025 16:45:01 +0100
+Subject: [PATCH] add more managers
+
+---
+ kernel/apk_sign.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/kernel/apk_sign.c b/kernel/apk_sign.c
+index 522eb506..e41acd09 100644
+--- a/kernel/apk_sign.c
++++ b/kernel/apk_sign.c
+@@ -387,5 +387,11 @@ bool is_manager_apk(char *path)
+ 	pr_info("%s: expected size: %u, expected hash: %s\n",
+ 		path, expected_manager_size, expected_manager_hash);
+ 
++#ifdef CONFIG_KSU_SUSFS
++	return (check_v2_signature(path, expected_manager_size, expected_manager_hash) || // Default Manager
++			check_v2_signature(path, 0x33b, "c371061b19d8c7d7d6133c6a9bafe198fa944e50c1b31c9d8daa8d7f1fc2d2d6") || // KernelSU Manager
++			check_v2_signature(path, 0x39b, "593d4ce870c02468639efeef631e07ca4d852d63f154be56706229f9a5be0800")); // TheWildJames Fork Manager
++#else
+ 	return check_v2_signature(path, expected_manager_size, expected_manager_hash);
++#endif
+ }
+-- 
+2.51.0
+
