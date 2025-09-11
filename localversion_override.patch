@@ -1,38 +1,64 @@
 --- a/build/kernel/kleaf/impl/kernel_build.bzl
 +++ b/build/kernel/kleaf/impl/kernel_build.bzl
-@@ -274,6 +274,10 @@
-         "outs": attr.output_list(
-             doc = "The list of output files from the kernel build.",
-         ),
-+        "localversion_override": attr.string(
-+            doc = "A custom string to completely replace the generated localversion.",
-+            default = "",
-+        ),
-         "_for_test": attr.bool(default = False),
-     },
-     toolchains = [str(Label("//build/kernel/kleaf:hermetic_toolchain_type"))],
-@@ -395,6 +399,7 @@
-     )
-     kernel_config(
-         name = ctx.attr.name + ".config",
-+        localversion_override = ctx.attr.localversion_override,
-         outs = config_outs,
-         base_config = base_config,
-         build_config = build_config_path,
+@@ -102,6 +102,7 @@
+         modules_prepare_force_generate_headers = None,
+         defconfig_fragments = None,
+         page_size = None,
++        localversion_override = None,
+         **kwargs):
+     """Defines a kernel build target with all dependent targets.
+ 
+@@ -512,6 +513,7 @@
+         name = config_target_name,
+         env = env_target_name,
+         srcs = srcs,
++        localversion_override = localversion_override,
+         trim_nonlisted_kmi = trim_nonlisted_kmi,
+         raw_kmi_symbol_list = raw_kmi_symbol_list_target_name,
+         module_signing_key = module_signing_key,
+--- a/build/kernel/kleaf/impl/kernel_config.bzl
++++ b/build/kernel/kleaf/impl/kernel_config.bzl
+@@ -88,6 +88,7 @@
+         lto,
+         defconfig_fragments,
+         _for_test = False,
++        localversion_override = None,
+         **kwargs):
+     """A macro that defines a kernel config target.
+ 
+@@ -112,6 +113,7 @@
+     _kernel_config(
+         name = name,
+         env = env,
++        localversion_override = localversion_override,
+         srcs = srcs,
+         trim_nonlisted_kmi = trim_nonlisted_kmi,
+         raw_kmi_symbol_list = raw_kmi_symbol_list,
+@@ -160,6 +162,9 @@
+         "lto": attr.string(),
+         "_for_test": attr.bool(default = False),
+         "defconfig_fragments": attr.label_list(allow_files = True),
++        "localversion_override": attr.string(
++            doc = "A custom string to completely replace the generated localversion.",
++        ),
+     },
+     toolchains = [hermetic_toolchain.type],
+ )
 --- a/build/kernel/kleaf/impl/stamp.bzl
 +++ b/build/kernel/kleaf/impl/stamp.bzl
-@@ -40,6 +40,14 @@
-         output localversion file
-     """
+@@ -43,6 +43,15 @@
+     """
  
-+    # If an override is provided, use it and skip everything else.
-+    if hasattr(ctx.attr, "localversion_override") and ctx.attr.localversion_override:
-+        ctx.actions.write(
-+            output = out_file,
-+            content = ctx.attr.localversion_override,
-+        )
-+        return out_file
+     out_file = ctx.actions.declare_file(ctx.attr.name + "/localversion")
 +
-     out_file = ctx.actions.declare_file(ctx.attr.name + "/localversion")
-     if ctx.attr._config_is_stamp[BuildSettingInfo].value:
-         inputs = [ctx.info_file]
++    # If an override is provided, use it and skip everything else.
++    if hasattr(ctx.attr, "localversion_override") and ctx.attr.localversion_override:
++        ctx.actions.write(
++            output = out_file,
++            content = ctx.attr.localversion_override,
++        )
++        return out_file
++
+     if ctx.attr._config_is_stamp[BuildSettingInfo].value:
+         inputs = [ctx.info_file]
+         stable_scmversion_cmd = _get_status_at_path(ctx, "STABLE_SCMVERSIONS", '"${KERNEL_DIR}"')
