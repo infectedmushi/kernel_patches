@@ -1,5 +1,5 @@
---- a/build/kernel/kleaf/kernel_build.bzl
-+++ b/build/kernel/kleaf/kernel_build.bzl
+--- a/build/kernel/kleaf/impl/kernel_build.bzl
++++ b/build/kernel/kleaf/impl/kernel_build.bzl
 @@ -274,6 +274,10 @@
          "outs": attr.output_list(
              doc = "The list of output files from the kernel build.",
