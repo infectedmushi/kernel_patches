@@ -1,0 +1,13 @@
+diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
+index b5c5aa25b..3e31e25fd 100644
+--- a/include/asm-generic/io.h
++++ b/include/asm-generic/io.h
+@@ -71,7 +71,7 @@
+  *     #include <...>
+  *     ...
+  */
+-#if IS_ENABLED(CONFIG_TRACE_MMIO_ACCESS) && !(defined(__DISABLE_TRACE_MMIO__))
++#if IS_ENABLED(CONFIG_TRACE_MMIO_ACCESS) && !(defined(__DISABLE_TRACE_MMIO__)) && (!defined(MODULE) || defined(__ENABLE_TRACE_MMIO__))
+ #include <linux/tracepoint-defs.h>
+
+ #define rwmmio_tracepoint_enabled(tracepoint) tracepoint_enabled(tracepoint)
